@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resume {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #007BFF;
+        }
+
+        #themes, #fonts, #background-color {
+            margin-bottom: 10px;
+        }
+
+        #background-color {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Resume Generator</h1>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Your Name">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Your Email">
+
+        <label for="mobile">Mobile Number:</label>
+        <input type="tel" id="mobile" placeholder="Your Mobile Number">
+
+        <label for="education">Education:</label>
+        <textarea id="education" placeholder="Your Education"></textarea>
+
+        <label for="experience">Experience:</label>
+        <textarea id="experience" placeholder="Your Experience"></textarea>
+
+        <label for="certifications">Certifications:</label>
+        <textarea id="certifications" placeholder="Your Certifications"></textarea>
+
+        <label for="awards">Awards:</label>
+        <textarea id="awards" placeholder="Your Awards"></textarea>
+
+        <label for="skills">Skills:</label>
+        <textarea id="skills" placeholder="Your Skills"></textarea>
+
+        <label for="socialLinks">Social Links:</label>
+        <input type="text" id="socialLinks" placeholder="Your Social Links">
+
+        <label for="themes">Select Theme:</label>
+        <select id="themes">
+            <option value="theme1">Theme 1</option>
+            <option value="theme2">Theme 2</option>
+        </select>
+
+        <label for="fonts">Select Font:</label>
+        <select id="fonts">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Times New Roman, serif">Times New Roman</option>
+        </select>
+
+        <label for="background-color">Select Background Color:</label>
+        <input type="color" id="background-color" value="#ffffff">
+
+        <button onclick="generateResume()">Generate Resume</button>
+
+        <div id="resume">
+            <h2 id="resumeName"></h2>
+            <p id="resumeEmail"></p>
+            <p id="resumeMobile"></p>
+            <h3>Education:</h3>
+            <p id="resumeEducation"></p>
+            <h3>Experience:</h3>
+            <p id="resumeExperience"></p>
+            <h3>Certifications:</h3>
+            <p id="resumeCertifications"></p>
+            <h3>Awards:</h3>
+            <p id="resumeAwards"></p>
+            <h3>Skills:</h3>
+            <p id="resumeSkills"></p>
+            <h3>Social Links:</h3>
+            <p id="resumeSocialLinks"></p>
+            <button onclick="downloadResume()">Download PDF</button>
+        </div>
+    </div>
+
+    <!-- External libraries -->
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+    <script>
+        function generateResume() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const mobile = document.getElementById('mobile').value;
+            const education = document.getElementById('education').value;
+            const experience = document.getElementById('experience').value;
+            const certifications = document.getElementById('certifications').value;
+            const awards = document.getElementById('awards').value;
+            const skills = document.getElementById('skills').value;
+            const socialLinks = document.getElementById('socialLinks').value;
+            const theme = document.getElementById('themes').value;
+            const font = document.getElementById('fonts').value;
+            const backgroundColor = document.getElementById('background-color').value;
+
+            document.getElementById('resume').style.fontFamily = font;
+            document.getElementById('resume').style.backgroundColor = backgroundColor;
+
+            document.getElementById('resumeName').innerText = name;
+            document.getElementById('resumeEmail').innerText = email;
+            document.getElementById('resumeMobile').innerText = mobile ? `Mobile: ${mobile}` : '';
+            document.getElementById('resumeEducation').innerText = education;
+            document.getElementById('resumeExperience').innerText = experience;
+            document.getElementById('resumeCertifications').innerText = certifications;
+            document.getElementById('resumeAwards').innerText = awards;
+            document.getElementById('resumeSkills').innerText = skills;
+            document.getElementById('resumeSocialLinks').innerHTML = `<a href="${socialLinks}" target="_blank">${socialLinks}</a>`;
+
+            applyTheme(theme);
+            
+            document.getElementById('resume').style.display = 'block';
+        }
+
+        function downloadResume() {
+            const resumeContainer = document.getElementById('resume');
+            const pdfOptions = {
+                margin: 10,
+                filename: 'resume.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().from(resumeContainer).set(pdfOptions).save();
+        }
+
+        function applyTheme(theme) {
+            const themeStylesheet = document.getElementById('theme-stylesheet');
+            
+            if (themeStylesheet) {
+                themeStylesheet.href = `path/to/${theme}.css`;
+            } else {
+                const newStylesheet = document.createElement('link');
+                newStylesheet.rel = 'stylesheet';
+                newStylesheet.href = `path/to/${theme}.css`;
+                newStylesheet.id = 'theme-stylesheet';
+                document.head.appendChild(newStylesheet);
+            }
+        }
+    </script>
+</body>
+</html>
